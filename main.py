@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 import json
 import re
-from fpdf import FPDF
 
 # Configure Gemini API Key
 genai.configure(api_key="AIzaSyD1Z1XNw8A5SyUuXwdQ7VG_a1PzeYOHoac")  
@@ -39,34 +38,6 @@ Only return JSON. Do not include markdown or text outside the JSON.
         st.code(response.text, language="markdown")
         return []
 
-# Function to create and download PDF
-def create_pdf(questions, score, total_questions):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    # Title
-    pdf.cell(200, 10, txt="Python MCQ Quiz Results", ln=True, align="C")
-
-    # Questions and answers
-    for i, question in enumerate(questions, 1):
-        pdf.cell(200, 10, txt=f"Q{i}. {question['question']}", ln=True)
-        for key, value in question["options"].items():
-            pdf.cell(200, 10, txt=f"  {key}: {value}", ln=True)
-        answer = f"Answer: {question['answer']}"
-        pdf.cell(200, 10, txt=answer, ln=True)
-        pdf.cell(200, 10, txt=f"Explanation: {question['explanation']}\n", ln=True)
-
-    # Score
-    pdf.cell(200, 10, txt=f"\nYour Score: {score} / {total_questions}", ln=True)
-
-    # Save PDF and provide download link
-    pdf_output = "/mnt/data/python_mcq_quiz_results.pdf"
-    pdf.output(pdf_output)
-    return pdf_output
-
-# UI: Title and Input
 # UI: Title and Input
 st.title("🐍 Python MCQ Quiz Generator")
 
@@ -125,7 +96,6 @@ else:
                     st.markdown("---")
             else:
                 st.markdown("🎯 Amazing! All answers correct!")
-
 
             if st.button("🔁 Restart"):
                 for key in ["mcqs", "current_q", "score", "topic_entered", "mode", "answers"]:
